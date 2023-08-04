@@ -39,5 +39,73 @@ namespace BulkuBookWeb.Controllers
             }
             return View(obj);
         }
+        //GET action method
+        public IActionResult Edit(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+            var CategoryFromDb = _db.Categories.Find(id);
+            if (CategoryFromDb == null) 
+            {
+                return NotFound();
+            }
+
+            return View(CategoryFromDb);
+
+        }
+        //POST action method 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Category obj)
+        {
+            if (obj.Name == obj.DisplayOrder.ToString())
+            {
+                ModelState.AddModelError("CustomError", "The Name field cannot exactly match the order field");
+            }
+            if (ModelState.IsValid)
+            {
+                _db.Categories.Update(obj);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(obj);
+        }
+        public IActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var CategoryFromDb = _db.Categories.Find(id);
+            if (CategoryFromDb == null)
+            {
+                return NotFound();
+            }
+
+            return View(CategoryFromDb);
+
+        }
+        //POST action method 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePost(int? id)
+        {
+            
+                var obj = _db.Categories.Find(id);  
+            if (obj == null) 
+            {
+                return NotFound();
+            }
+                _db.Categories.Remove(obj);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+           
+            
+        }
     }
 }
+
+
+
